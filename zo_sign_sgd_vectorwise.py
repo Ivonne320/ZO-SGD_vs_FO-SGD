@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from torch.optim.optimizer import Optimizer
 import random
 #from logistic_regression import model, criterion, X_train, y_train
@@ -11,14 +12,17 @@ class ZO_SGD(Optimizer):
     # we introduce a use_tru_grad flag, and set to false by default          #
     # =======================================================================#
 
-    def __init__(self, params, lr=1e-3, eps=1e-8, fd_eps=1e-4, use_true_grad=False):
-        defaults = dict(lr=lr, eps=eps, fd_eps=fd_eps, use_true_grad=use_true_grad)
+    def __init__(self, params, model, inputs, labels, criterion, lr=1e-3, fd_eps=1e-4, use_true_grad=False):
+        self.model = model
+        self.inputs = inputs
+        self.labels = labels
+        self.criterion = criterion
+        defaults = dict(lr=lr, fd_eps=fd_eps, use_true_grad=use_true_grad)
         super().__init__(params, defaults)
 
     def step(self):
         for group in self.param_groups:
             lr = group['lr']
-            eps = group['eps']
             fd_eps = group['fd_eps']
             use_true_grad = group['use_true_grad']
             for param in group['params']:
@@ -38,20 +42,19 @@ class ZO_SGD(Optimizer):
       orig_param = param.data.clone()
 
     # Generate a random direction for the entire parameter vector
- 
       direction = torch.randint(0, 2, param.data.shape) * 2 - 1
 
     # Perturb the parameters along the random direction
       param.data.add_(fd_eps * direction)
 
     # Compute the loss with the perturbed parameters
-      loss_plus = criterion(model(X_train.squeeze()), y_train.float())  # Replace with our stochastic loss computation
+      loss_plus = self.criterion(self.model(self.inputs), F.one_hot(self.labels, num_classes=10).float())  # Replace with our stochastic loss computation
 
     # Perturb the parameters in the opposite direction
       param.data.sub_(2 * fd_eps * direction)
 
     # Compute the loss with the opposite perturbed parameters
-      loss_minus = criterion(model(X_train.squeeze()), y_train.float())  # Replace with our stochastic loss computation
+      loss_minus = self.criterion(self.model(self.inputs), F.one_hot(self.labels, num_classes=10).float())  # Replace with our stochastic loss computation
 
     # Estimate the gradient using the finite difference approximation
       grad_est_flat = (loss_plus - loss_minus) / (2 * fd_eps)

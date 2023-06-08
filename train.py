@@ -14,6 +14,7 @@ from fo_sgd import *
 from fo_sign_sgd import *
 from model import *
 
+
 def get_dataset(config):
     """
     Create dataset loaders for the MNIST dataset
@@ -53,7 +54,7 @@ def get_dataset(config):
     return training_loader, test_loader
 
 
-def get_optimizer(model_parameters, config):
+def get_optimizer(model_parameters, config, model, inputs, labels, criterion):
     """
     Create an optimizer for a given model
     :param model_parameters: a list of parameters to be trained
@@ -62,16 +63,20 @@ def get_optimizer(model_parameters, config):
     if config["optimizer"] == "zo_sgd":
         optimizer = ZO_SGD(
             model_parameters,
+            model,
+            inputs,
+            labels,
+            criterion,
             lr = config["learning_rate"],
-            fd_eps = config.get('fd_eps'),
-            use_true_grad = config.get('use_true_grad')
+            fd_eps = config["fd_eps"],
+            use_true_grad = config['use_true_grad']
         )
     elif config["optimizer"] == "zo_sign_sgd":
         optimizer = ZO_SignSGD(
             model_parameters,
             lr = config["learning_rate"],
-            fd_eps = config.get('fd_eps'),
-            use_true_grad = config.get('use_true_grad')
+            fd_eps = config["fd_eps"],
+            use_true_grad = config['use_true_grad']
         )
     elif config["optimizer"] == "fo_sgd":
         optimizer = FirstOrderSGD(
@@ -121,6 +126,51 @@ def accuracy(pred, label):
     
     return num_correct_pred.float() / label.nelement()
 
+
+def get_optimizer(model_parameters, config):
+    """
+    Create an optimizer for a given model
+    :param model_parameters: a list of parameters to be trained
+    :return: Tuple (optimizer, scheduler)
+    """
+    if config["optimizer"] == "zo_sgd":
+        optimizer = ZO_SGD(
+            model_parameters,
+            lr = config["learning_rate"],
+            fd_eps = config.get('fd_eps'),
+            use_true_grad = config.get('use_true_grad')
+        )
+    elif config["optimizer"] == "zo_sign_sgd":
+        optimizer = ZO_SignSGD(
+            model_parameters,
+            lr = config["learning_rate"],
+            fd_eps = config.get('fd_eps'),
+            use_true_grad = config.get('use_true_grad')
+        )
+    elif config["optimizer"] == "fo_sgd":
+        optimizer = FirstOrderSGD(
+            model_parameters,
+            lr=config["learning_rate"],
+            momentum=config["momentum"],
+            dampening=config["dampening"],
+        )
+    elif config["optimizer"] == "fo_sign_sgd":
+        optimizer = FirstOrderSignSGD(
+            model_parameters,
+            lr=config["learning_rate"]
+        )
+    else:
+        raise ValueError("Unexpected value for optimizer")
+    
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(
+        optimizer,
+        milestones=config["decay_at_epochs"],
+        gamma=1.0/config["decay_with_factor"],
+    )
+
+    return optimizer, scheduler
+
+
 def main(config):
     '''
     Train and test the model
@@ -157,9 +207,10 @@ def main(config):
 
     # Configure the dataset, model and the optimizer based on the 'config' dictionary
     training_loader, test_loader = get_dataset(config)
+    inputs, labels = next(iter(training_loader))
     model = get_model(device, config)
     criterion = torch.nn.BCELoss()
-    optimizer, scheduler = get_optimizer(model.parameters(), config)
+    optimizer, scheduler = get_optimizer(model.parameters(), config, model, inputs, labels, criterion)
 
     # Store the loss and accuracy
     epoch_metrics = defaultdict(list)
