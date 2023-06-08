@@ -1,6 +1,7 @@
 import torch
 from torch.optim.optimizer import Optimizer
 import random
+#from logistic_regression import model, criterion, X_train, y_train
 
 class ZO_SGD(Optimizer):
 
@@ -27,25 +28,25 @@ class ZO_SGD(Optimizer):
                 if use_true_grad:
                     grad_est = param.grad.data
                 else:
-                    grad_est = self._compute_gradient_direction(param, eps, fd_eps)
+                    grad_est = self._compute_gradient_direction(param, fd_eps)
 
                 param.data.add_(-lr * grad_est)
 
 
-    def _compute_gradient_direction(self, param, eps, fd_eps):
+    def _compute_gradient_direction(self, param, fd_eps):
         grad_est = torch.zeros_like(param.data)
         orig_param = param.data.clone() # Make a copy of the original parameters
+      
         for i in range(param.data.numel()):
             # idea here is to element-wisely estimate the gradient by finite difference
             param.data.view(-1)[i] += fd_eps # update the i-th element of the parameters towards one direction
-            loss_plus = self._compute_loss() # replace here with our stochastic loss computation
+            loss_plus = criterion(model(X_train.squeeze()), y_train.float()) # replace here with our stochastic loss computation
             param.data.view(-1)[i] -= 2 * fd_eps # update the i-th element of the parameters towards another direction
-            loss_minus = self._compute_loss() # replace here with our stochastic loss computation
+            loss_minus = criterion(model(X_train.squeeze()), y_train.float()) # replace here with our stochastic loss computation
             grad_est_flat = (loss_plus - loss_minus) / (2 * fd_eps)
-            grad_est[i] = grad_est_flat
+            grad_est.view(-1)[i] = grad_est_flat
             param.data = orig_param.clone() # restore the original parameters
         
         
         return grad_est
-    
     
