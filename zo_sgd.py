@@ -49,4 +49,6 @@ class ZO_SGD(Optimizer):
         
         
         return grad_est
-    
+
+# above element-wise finite difference gradient estimation is not efficient, and I tried using it on a real dataset and large-scale network
+# seems highly RAM-demanding and time-consuming, let's see if it works for our network requirement, and I'm also trying to find a better way to do this
