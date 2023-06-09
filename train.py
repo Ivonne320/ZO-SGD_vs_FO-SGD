@@ -117,6 +117,7 @@ def get_model(device, config):
         torch.backends.cudnn.benchmark = True
     return model
 
+
 def accuracy(pred, label):
     """
     Compute the ratio of correctly predicted labels
@@ -125,50 +126,6 @@ def accuracy(pred, label):
     num_correct_pred = (pred == label).sum()
     
     return num_correct_pred.float() / label.nelement()
-
-
-def get_optimizer(model_parameters, config):
-    """
-    Create an optimizer for a given model
-    :param model_parameters: a list of parameters to be trained
-    :return: Tuple (optimizer, scheduler)
-    """
-    if config["optimizer"] == "zo_sgd":
-        optimizer = ZO_SGD(
-            model_parameters,
-            lr = config["learning_rate"],
-            fd_eps = config.get('fd_eps'),
-            use_true_grad = config.get('use_true_grad')
-        )
-    elif config["optimizer"] == "zo_sign_sgd":
-        optimizer = ZO_SignSGD(
-            model_parameters,
-            lr = config["learning_rate"],
-            fd_eps = config.get('fd_eps'),
-            use_true_grad = config.get('use_true_grad')
-        )
-    elif config["optimizer"] == "fo_sgd":
-        optimizer = FirstOrderSGD(
-            model_parameters,
-            lr=config["learning_rate"],
-            momentum=config["momentum"],
-            dampening=config["dampening"],
-        )
-    elif config["optimizer"] == "fo_sign_sgd":
-        optimizer = FirstOrderSignSGD(
-            model_parameters,
-            lr=config["learning_rate"]
-        )
-    else:
-        raise ValueError("Unexpected value for optimizer")
-    
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(
-        optimizer,
-        milestones=config["decay_at_epochs"],
-        gamma=1.0/config["decay_with_factor"],
-    )
-
-    return optimizer, scheduler
 
 
 def main(config):
