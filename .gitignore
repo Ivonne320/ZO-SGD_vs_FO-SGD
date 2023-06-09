@@ -1,0 +1,4 @@
+.venv/
+*.pyc
+t10k-*
+train-*
