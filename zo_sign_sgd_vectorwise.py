@@ -34,7 +34,6 @@ class ZO_SignSGD(Optimizer):
 
                 param.data.add_(-lr * torch.sign(grad_est))
 
-
     def _compute_gradient_direction(self, param, fd_eps):
       grad_est = torch.zeros_like(param.data)
       orig_param = param.data.clone()
@@ -42,6 +41,7 @@ class ZO_SignSGD(Optimizer):
 
     # Generate a random direction for the entire parameter vector
       direction = torch.randint(0, 2, param.data.shape) * 2 - 1
+      direction = direction.to(param.device)
 
     # Perturb the parameters along the random direction
       param.data.add_(fd_eps * direction)

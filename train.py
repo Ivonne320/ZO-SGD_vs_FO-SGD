@@ -200,8 +200,8 @@ def main(config):
             optimizer.step()
 
             # Store the statistics
-            batch_metrics["train_loss"] += loss.detach().numpy()
-            batch_metrics["train_acc"] += acc.detach().numpy()
+            batch_metrics["train_loss"] += loss.detach().cpu().numpy()
+            batch_metrics["train_acc"] += acc.detach().cpu().numpy()
 
         # Update the optimizer's learning rate
         if scheduler:
@@ -222,8 +222,8 @@ def main(config):
             prediction = model(inputs)
             loss = criterion(prediction, F.one_hot(labels, num_classes=10).float())
             acc = accuracy(prediction, labels)
-            batch_metrics["test_loss"] += loss.detach().numpy()
-            batch_metrics["test_acc"] += acc.detach().numpy()
+            batch_metrics["test_loss"] += loss.detach().cpu().numpy()
+            batch_metrics["test_acc"] += acc.detach().cpu().numpy()
 
         # Log test stats
         epoch_loss = batch_metrics["test_loss"] / (batch_idx + 1)

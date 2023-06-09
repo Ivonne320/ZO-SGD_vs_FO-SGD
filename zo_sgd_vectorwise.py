@@ -44,6 +44,7 @@ class ZO_SGD(Optimizer):
 
     # Generate a random direction for the entire parameter vector
       direction = torch.randint(0, 2, param.data.shape) * 2 - 1
+      direction = direction.to(param.device)
 
     # Perturb the parameters along the random direction
       param.data.add_(fd_eps * direction)
@@ -77,6 +78,6 @@ class ZO_SGD(Optimizer):
 
     # Restore the original parameters
       param.data = orig_param.clone()
-      print("grad_est: {:.2e}".format(grad_est))
+      # print("grad_est: {:.2e}".format(grad_est))
 
       return grad_est
