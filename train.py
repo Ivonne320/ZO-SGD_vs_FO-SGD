@@ -8,8 +8,8 @@ import torch.nn.functional as F
 import torchvision
 from collections import defaultdict
 
-from zo_sgd import *
-from zo_sign_sgd import *
+from zo_sgd_vectorwise import *
+from zo_sign_sgd_vectorwise import *
 from fo_sgd import *
 from fo_sign_sgd import *
 from model import *

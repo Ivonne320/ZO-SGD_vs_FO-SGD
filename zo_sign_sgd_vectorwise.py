@@ -64,5 +64,6 @@ class ZO_SGD(Optimizer):
 
     # Restore the original parameters
       param.data = orig_param.clone()
+     
 
       return grad_est

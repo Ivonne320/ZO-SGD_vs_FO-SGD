@@ -4,7 +4,7 @@ from torch.optim.optimizer import Optimizer
 
 #from logistic_regression import model, criterion, X_train, y_train
 
-class ZO_SGD(Optimizer):
+class ZO_SignSGD(Optimizer):
 
     # =======================================================================#
     # Since we are doing experiments with functions with available gradients,#
@@ -65,5 +65,6 @@ class ZO_SGD(Optimizer):
 
     # Restore the original parameters
       param.data = orig_param.clone()
+      print("grad_est: ", grad_est)
 
       return grad_est
