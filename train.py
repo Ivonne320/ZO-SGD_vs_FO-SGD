@@ -116,7 +116,7 @@ def get_model(device, config):
     }[config["model"]]()
 
     model.to(device)
-    if device == "cuda":
+    if device == "cuda:0":
         model = torch.nn.DataParallel(model)
         torch.backends.cudnn.benchmark = True
     return model
@@ -169,6 +169,7 @@ def main(config):
     # Configure the dataset, model and the optimizer based on the 'config' dictionary
     training_loader, test_loader = get_dataset(config)
     inputs, labels = next(iter(training_loader))
+    inputs, labels = inputs.to(device), labels.to(device)
     model = get_model(device, config)
     criterion = torch.nn.BCELoss()
     optimizer, scheduler = get_optimizer(model.parameters(), config, model, inputs, labels, criterion)
