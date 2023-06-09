@@ -74,6 +74,10 @@ def get_optimizer(model_parameters, config, model, inputs, labels, criterion):
     elif config["optimizer"] == "zo_sign_sgd":
         optimizer = ZO_SignSGD(
             model_parameters,
+            model,
+            inputs,
+            labels,
+            criterion,
             lr = config["learning_rate"],
             fd_eps = config["fd_eps"],
             use_true_grad = config['use_true_grad']
