@@ -161,6 +161,9 @@ def main(config):
         "decay_with_factor": used when scheduler=True
         ""
     }
+    Return
+    ====================
+    best_acc: Best test accuracy
     '''
     # Create directories
     os.makedirs("./model", exist_ok=True)
@@ -260,3 +263,5 @@ def main(config):
         writer = csv.writer(f)
         writer.writerow(epoch_metrics.keys())
         writer.writerows(zip(*epoch_metrics.values()))
+    
+    return best_acc
