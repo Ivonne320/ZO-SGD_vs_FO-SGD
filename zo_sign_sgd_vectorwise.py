@@ -75,6 +75,5 @@ class ZO_SignSGD(Optimizer):
 
     # Restore the original parameters
       param.data = orig_param.clone()
-      print("grad_est: {:.2e}".format(grad_est))
-
+     
       return grad_est

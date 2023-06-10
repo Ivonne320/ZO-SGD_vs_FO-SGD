@@ -171,7 +171,8 @@ def main(config):
     inputs, labels = next(iter(training_loader))
     inputs, labels = inputs.to(device), labels.to(device)
     model = get_model(device, config)
-    criterion = torch.nn.BCELoss()
+    # criterion = torch.nn.BCELoss() # [TODO] maybe use CrossEntropyLoss
+    criterion = torch.nn.CrossEntropyLoss()
     optimizer, scheduler = get_optimizer(model.parameters(), config, model, inputs, labels, criterion)
 
     # Store the loss and accuracy

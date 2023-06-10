@@ -44,6 +44,7 @@ class ZO_SGD(Optimizer):
 
     # Generate a random direction for the entire parameter vector
       direction = torch.randint(0, 2, param.data.shape) * 2 - 1
+    
 
     # Perturb the parameters along the random direction
       param.data.add_(fd_eps * direction)
@@ -58,7 +59,7 @@ class ZO_SGD(Optimizer):
       loss_plus = self.criterion(self.model(self.inputs), F.one_hot(self.labels, num_classes=10).float())  # Replace with our stochastic loss computation
 
     # Perturb the parameters in the opposite direction
-      param.data.sub_(2 * fd_eps * direction)
+      param.data.sub_(1 * fd_eps * direction) #get back to original
       
       # new_model_state = self.model.state_dict().__str__()
       # if orig_model_state == new_model_state:
@@ -67,16 +68,16 @@ class ZO_SGD(Optimizer):
       #     print("- direction: Updated")
 
     # Compute the loss with the opposite perturbed parameters
-      loss_minus = self.criterion(self.model(self.inputs), F.one_hot(self.labels, num_classes=10).float())  # Replace with our stochastic loss computation
+      loss_ = self.criterion(self.model(self.inputs), F.one_hot(self.labels, num_classes=10).float())  # Replace with our stochastic loss computation
       
     # Estimate the gradient using the finite difference approximation
-      grad_est_flat = (loss_plus - loss_minus) / (2 * fd_eps)
+      grad_est_flat = (loss_plus - loss_) / (fd_eps)
 
     # Assign the estimated gradient to grad_est
-      grad_est = grad_est_flat
+      grad_est = grad_est_flat/direction
 
     # Restore the original parameters
       param.data = orig_param.clone()
-      print("grad_est: {:.2e}".format(grad_est))
+      #print("grad_est: {:.2e}".format(grad_est))
 
       return grad_est
