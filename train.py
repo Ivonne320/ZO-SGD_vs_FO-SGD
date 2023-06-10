@@ -18,7 +18,6 @@ from model import *
 def get_dataset(config):
     """
     Create dataset loaders for the MNIST dataset
-    
     Return
     ====================
     Tuple (training_loader, test_loader)
@@ -57,8 +56,12 @@ def get_dataset(config):
 def get_optimizer(model_parameters, config, model, inputs, labels, criterion):
     """
     Create an optimizer for a given model
-    :param model_parameters: a list of parameters to be trained
-    :return: Tuple (optimizer, scheduler)
+    Parameters
+    ====================
+    model_parameters: a list of parameters to be trained
+    Return
+    ====================
+    Tuple (optimizer, scheduler)
     """
     if config["optimizer"] == "zo_sgd":
         optimizer = ZO_SGD(
@@ -108,8 +111,12 @@ def get_optimizer(model_parameters, config, model, inputs, labels, criterion):
 
 def get_model(device, config):
     """
-    :param device: instance of torch.device
-    :return: An instance of torch.nn.Module
+    Parameters
+    ====================
+    device: instance of torch.device
+    Return
+    ====================
+    An instance of torch.nn.Module
     """
     model = {
         "mynet": lambda: MyNet(num_classes=10)
@@ -135,7 +142,6 @@ def accuracy(pred, label):
 def main(config):
     '''
     Train and test the model
-
     Parameters
     ====================
     config: Dictionary
@@ -201,8 +207,8 @@ def main(config):
             optimizer.step()
 
             # Store the statistics
-            batch_metrics["train_loss"] += loss.detach().numpy()
-            batch_metrics["train_acc"] += acc.detach().numpy()
+            batch_metrics["train_loss"] += loss.detach().cpu().numpy()
+            batch_metrics["train_acc"] += acc.detach().cpu().numpy()
 
         # Update the optimizer's learning rate
         if scheduler:
@@ -223,8 +229,8 @@ def main(config):
             prediction = model(inputs)
             loss = criterion(prediction, F.one_hot(labels, num_classes=10).float())
             acc = accuracy(prediction, labels)
-            batch_metrics["test_loss"] += loss.detach().numpy()
-            batch_metrics["test_acc"] += acc.detach().numpy()
+            batch_metrics["test_loss"] += loss.detach().cpu().numpy()
+            batch_metrics["test_acc"] += acc.detach().cpu().numpy()
 
         # Log test stats
         epoch_loss = batch_metrics["test_loss"] / (batch_idx + 1)
