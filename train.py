@@ -139,11 +139,12 @@ def accuracy(pred, label):
     return num_correct_pred.float() / label.nelement()
 
 
-def main(config):
+def main(unique_name, config):
     '''
     Train and test the model
     Parameters
     ====================
+    unique_name: String
     config: Dictionary
     {
         "model",
@@ -256,14 +257,14 @@ def main(config):
     momentum = config["momentum"]
     fd_eps = config["fd_eps"]
     if config["optimizer"] in ["zo_sgd", "zo_sign_sgd"]:
-        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
-        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
+        metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
     elif config["optimizer"] == "fo_sgd":
-        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
-        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
+        metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
     elif config["optimizer"] == "fo_sign_sgd":
-        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
-        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
+        metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
     torch.save(best_model_wts, model_path)
     
     # Save the metrics
