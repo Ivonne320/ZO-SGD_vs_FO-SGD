@@ -161,6 +161,9 @@ def main(config):
         "decay_with_factor": used when scheduler=True
         ""
     }
+    Return
+    ====================
+    best_acc: Best test accuracy
     '''
     # Create directories
     os.makedirs("./model", exist_ok=True)
@@ -250,13 +253,23 @@ def main(config):
 
     # Save the model with the best test accuracy
     lr = config["learning_rate"]
-    bs = config["batch_size_train"]
-    model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-bs_{bs}.pt')
+    momentum = config["momentum"]
+    fd_eps = config["fd_eps"]
+    if config["optimizer"] in ["zo_sgd", "zo_sign_sgd"]:
+        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
+        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
+    elif config["optimizer"] == "fo_sgd":
+        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
+        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
+    elif config["optimizer"] == "fo_sign_sgd":
+        model_path = os.path.join("./model", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
+        metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
     torch.save(best_model_wts, model_path)
-
+    
     # Save the metrics
-    metrics_path = os.path.join("./metrics", f'{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-bs_{bs}.csv')
     with open(metrics_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(epoch_metrics.keys())
         writer.writerows(zip(*epoch_metrics.values()))
+    
+    return best_acc
