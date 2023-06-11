@@ -2,3 +2,5 @@
 *.pyc
 t10k-*
 train-*
+model/
+metrics/
