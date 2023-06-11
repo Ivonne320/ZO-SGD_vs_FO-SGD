@@ -257,13 +257,13 @@ def main(unique_name, config):
     momentum = config["momentum"]
     fd_eps = config["fd_eps"]
     if config["optimizer"] in ["zo_sgd", "zo_sign_sgd"]:
-        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.pt')
         metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-eps_{fd_eps}.csv')
     elif config["optimizer"] == "fo_sgd":
-        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.pt')
         metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}-momentum_{momentum}.csv')
     elif config["optimizer"] == "fo_sign_sgd":
-        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
+        model_path = os.path.join("./model", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.pt')
         metrics_path = os.path.join("./metrics", f'{unique_name}_{config["model"]}_{config["optimizer"]}-ep_{best_epoch}-lr_{lr}.csv')
     torch.save(best_model_wts, model_path)
     
