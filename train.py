@@ -250,6 +250,7 @@ def main(unique_name, config):
 
         end = time.time()
         elapsed = end - start
+        epoch_metrics["time"].append(elapsed)
         print("time elapsed: {:02}:{:02}".format(int(elapsed//60), int(elapsed%60)))
 
     # Save the model with the best test accuracy
