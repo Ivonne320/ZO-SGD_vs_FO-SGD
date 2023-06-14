@@ -20,7 +20,7 @@ class MyNet(nn.Module):
         x = self.a(x)
         return x
     
-'''class MyNet(nn.Module):
+class MyNetPlus(nn.Module):
     def __init__(self, num_classes=10):
         super().__init__()
         self.features = nn.Sequential(
@@ -63,4 +63,3 @@ class MyNet(nn.Module):
         x = x.view(-1, 320)
         x = self.classifier(x)
         return x
-        '''

@@ -119,7 +119,8 @@ def get_model(device, config):
     An instance of torch.nn.Module
     """
     model = {
-        "mynet": lambda: MyNet(num_classes=10)
+        "mynet": lambda: MyNet(num_classes=10),
+        "mynetplus": lambda: MyNetPlus(num_classes=10)
     }[config["model"]]()
 
     model.to(device)
@@ -147,7 +148,8 @@ def main(unique_name, config):
     unique_name: String
     config: Dictionary
     {
-        "model",
+        "seed",
+        "model": one of "mynet", "mynetplus",
         "num_epochs",
         "batch_size_train",
         "batch_size_test",
