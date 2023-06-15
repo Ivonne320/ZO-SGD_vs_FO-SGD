@@ -6,6 +6,8 @@ This repository contains the source code of the miniproject for the course "CS-4
 
 The repository is structured as below:
 ```
+|------ conv_scale_hybrid             # Source code for model scaling and hybrid approach analysis
+|------ figures                       # Figures for this readme
 |------ metrics                       # Results of the experiments
 |------ README.md                     # You are here
 |------ data_analysis.ipynb           # Results visualization
@@ -27,10 +29,17 @@ We performed a grid search on learning rate, momentum for FO-SGD, and forward di
 
 ![Comparison of ZO and FO optimizers with optimal configurations](./figures/optim_config_train_loss_accuracy_h.png)
 
-Performance comparison was also conducted for different optimizers with same learning rates. The performance of FO optimizers appeared to be more sensitive to changes in the learning rate. Excessive learning rates could result in overshooting for FO optimizers, which was not observed for ZO optimizers in the scope of our experiments. ZO optimizers on the other hand utilize perturbation techniques to estimate the gradients which inherently introduce a level of noise. This noise can act as a regularizer, making ZO optimizers more robust to learning rate changes. Another point to note here is that to achieve similar performance, sign-optimizers generally require lower learning rates, which may be caused by the loss of information on gradient magnitude.
+Performance comparison was also conducted for different optimizers with same learning rates. The performance of FO optimizers appeared to be more sensitive to changes in the learning rate. Excessive learning rates could result in overshooting for FO optimizers. On the other hand, ZO optimizers utilize perturbation techniques to estimate the gradients which inherently introduce a level of noise. This noise can act as a regularizer, making ZO optimizers more robust to learning rate changes. Another point to note here is that to achieve similar performance, sign-optimizers generally require lower learning rates, which may be caused by the loss of information on gradient magnitude.
 
 ![Comparison of ZO and FO optimizers using same learning rates](./figures/FO_ZO_compare_train_loss_h.png)
 
+In this part, we ran the training of our MyNet neural network with ZO and FO optimization (with optimal configurations) while scaling the hidden layer neuron complexity by scaling factors of $[0.25, 0.5, 2]$. We observed that scaling the model by a factor of 2 resulted in much higher accuracy. In terms of time efficiency, the time spent per epoch was proportional to the model complexity for each optimizer.The interesting results we found were that the ratio for epoch time at different scales differs across optimizers. Taking the ratio of epoch time at $s = 2$ to that at $s = 0.5$ yielded a much higher ratio ($r= 1.83$) for ZO optimizer than FO optimizer ($r = 1.27$). We can conclude that in our ML application ZO-SGD is much more sensitive in terms of time efficiency to model scaling than FO-SGD, and ZO-SGD struggles more with high dimensionality than FO-SGD.
+
+![Training Accuracy with model scaling](./figures/accuracy_model_scaling.png) ![Time efficency with model scaling.](./figures/time_model_scaling.png)
+
+In cases where gradients are computationally more expensive than gradient approximation, hybrid optimization could be a powerful tool for overcoming this hurdle. In this part, a hybrid approach was evaluated where ZO-SGD and FO-SGD were sequentially applied with different epoch splits ($[25\%, 75\%], [50\%, 50\%], [75\%, 25\%]$). We observed that all hybrid optimizers reached very high accuracies of at least 0.95, and that ZOFO optimizers out performed FOZO optimizers by small margins. This validated the use of hybrid optimizers as an efficient alternative even in the case of 25\% FO SGD use.
+
+![Hybrid optimization for different epoch splits](./figures/hybrid_approach.png)
 
 ## Set-up
 The packages needed for running our code include:
