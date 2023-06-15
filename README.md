@@ -29,8 +29,11 @@ We performed a grid search on learning rate, momentum for FO-SGD, and forward di
 
 <figure>
     <img src="./figures/optim_config_train_loss_accuracy_h.png">
-    <figcaption align="center"><b>Comparison of ZO and FO optimizers with optimal configurations</b></figcaption>
 </figure>
+
+<p align="center">
+<b>Comparison of ZO and FO optimizers with optimal configurations</b>
+</p>
 
 Performance comparison was also conducted for different optimizers with same learning rates. The performance of FO optimizers appeared to be more sensitive to changes in the learning rate. Excessive learning rates could result in overshooting for FO optimizers. On the other hand, ZO optimizers utilize perturbation techniques to estimate the gradients which inherently introduce a level of noise. This noise can act as a regularizer, making ZO optimizers more robust to learning rate changes. Another point to note here is that to achieve similar performance, sign-optimizers generally require lower learning rates, which may be caused by the loss of information on gradient magnitude.
 
