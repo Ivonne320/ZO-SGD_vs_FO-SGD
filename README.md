@@ -30,7 +30,6 @@ We performed a grid search on learning rate, momentum for FO-SGD, and forward di
 <figure>
     <img src="./figures/optim_config_train_loss_accuracy_h.png">
 </figure>
-
 <p align="center">
 <b>Comparison of ZO and FO optimizers with optimal configurations</b>
 </p>
@@ -39,22 +38,28 @@ Performance comparison was also conducted for different optimizers with same lea
 
 <figure>
     <img src="./figures/FO_ZO_compare_train_loss_h.png">
-    <figcaption align="center"><b>Comparison of ZO and FO optimizers using same learning rates</b></figcaption>
 </figure>
+<p align="center">
+<b>Comparison of ZO and FO optimizers using same learning rates</b>
+</p>
 
 In this part, we ran the training of our MyNet neural network with ZO and FO optimization (with optimal configurations) while scaling the hidden layer neuron complexity by scaling factors of $[0.25, 0.5, 2]$. We observed that scaling the model by a factor of 2 resulted in much higher accuracy. In terms of time efficiency, the ratio for epoch time at different scales differs across optimizers. Taking the ratio of epoch time at $s = 2$ to that at $s = 0.5$ yielded a much higher ratio ($r= 1.83$) for ZO optimizer than FO optimizer ($r = 1.27$). We can conclude that in our ML application, ZO-SGD is much more sensitive in terms of time efficiency to model scaling than FO-SGD, and ZO-SGD struggles more with high dimensionality than FO-SGD.
 
 <figure>
     <img src="./figures/model_scaling.png">
-    <figcaption align="center"><b>Training accuracy and time efficency with model scaling</b></figcaption>
 </figure>
+<p align="center">
+<b>Training accuracy and time efficency with model scaling</b>
+</p>
 
 In cases where gradients are computationally more expensive than gradient approximation, hybrid optimization could be a powerful tool for overcoming this hurdle. In this part, a hybrid approach was evaluated where ZO-SGD and FO-SGD were sequentially applied with different epoch splits ($25\%:75\%, 50\%:50\%, 75\%:25\%$). We observed that all hybrid optimizers reached very high accuracies of at least 0.95, and that ZOFO optimizers out performed FOZO optimizers by small margins. This validated the use of hybrid optimizers as an efficient alternative even in the case of 25\% FO-SGD use.
 
-<figure>
-    <img src="./figures/hybrid_approach.png" width=300>
-    <figcaption align="center"><b>Hybrid optimization for different epoch splits</b></figcaption>
-</figure>
+<p align="center">
+    <img src="./figures/hybrid_approach.png" width=500>
+</p>
+<p align="center">
+<b>Hybrid optimization for different epoch splits</b>
+</p>
 
 ## Set-up
 The packages needed for running our code include:
